@@ -158,7 +158,7 @@ STR_END \"
   return STR_CONST;
 }
 <INSTRING><<EOF>> {BEGIN(INITIAL);RETURN_ERROR("EOF in string constant");}
-<*>. {RETURN_ERROR(*yytext);}
+<*>. {RETURN_ERROR(yytext);}
 %%
 void append_str(char c)
 {
