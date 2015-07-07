@@ -72,7 +72,7 @@ COMMENT_END \*\)
 LINE_COMMENT --[^\n]*
 STR_ESP \\.|\\\n
 STR_ANY [^"\\\n\0]
-STR_NULL \0
+STR_NULL \\?\0
 STR_NL \n
 STR_BEG \"
 STR_END \"
