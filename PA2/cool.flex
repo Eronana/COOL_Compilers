@@ -125,6 +125,7 @@ STR_END \"
 {OBJECTID} {SETID;return OBJECTID;}
 {TYPEID} {SETID;return TYPEID;}
 {OPERATOR} {return *yytext;}
+_ {RETURN_ERROR("Invaild identifier");}
 {SPACE} {}
  /*
   *  String constants (C syntax)
@@ -147,7 +148,7 @@ STR_END \"
   }
   if(c)append_str(c);
 }
-<INSTRING>{STR_NL} {curr_lineno++;str_err="Unterminated string constant";}
+<INSTRING>{STR_NL} {curr_lineno++;RETURN_ERROR("Unterminated string constant");}
 <INSTRING>{STR_ANY} {append_str(*yytext);}
 <INSTRING>{STR_END} {
   BEGIN(INITIAL);
