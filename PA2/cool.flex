@@ -149,7 +149,7 @@ STR_END \"
 <INSTRING>{STR_END} {
   if(str_err)RETURN_ERROR(str_err);
   *string_buf_ptr=0;
-  cool_yylval.symbol=stringtable.add_string(str_buffer);
+  cool_yylval.symbol=stringtable.add_string(string_buf);
   BEGIN(INITIAL);
   return STR_CONST;
 }
