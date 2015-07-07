@@ -44,6 +44,7 @@ extern YYSTYPE cool_yylval;
  */
 int comment_num=0;
 char *str_err;
+void append_str(char c);
 #define SETID cool_yylval.symbol=idtable.add_string(yytext)
 #define SETINT cool_yylval.symbol=inttable.add_string(yytext)
 #define SETTRUE cool_yylval.boolean=true
