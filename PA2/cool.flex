@@ -72,7 +72,7 @@ COMMENT_END \*\)
 LINE_COMMENT --[^\n]*
 STR_ESP \\.|\\\n
 STR_ANY [^"\\\n\0]
-STR_NULL [\0]
+STR_NULL \0
 STR_NL \n
 STR_BEG \"
 STR_END \"
@@ -80,7 +80,7 @@ STR_END \"
 %%
 
  /*
-  *  Nested comments
+ \0 *  Nested comments
   */
 <INITIAL>{COMMENT_BEG} {comment_num++;BEGIN(INCOMMENT);}
 <INCOMMENT>{COMMENT_BEG} {comment_num++;}
@@ -134,7 +134,7 @@ STR_END \"
   *
   */
 <INITIAL>{STR_BEG} {string_buf_ptr=string_buf;str_err=NULL;BEGIN(INSTRING);}
-<INSTRING>{STR_NULL} {BEGIN(INITIAL);RETURN_ERROR("String contains null character");}
+<INSTRING>{STR_NULL} {str_err="String contains null character";}
 <INSTRING>{STR_ESP} {
   char c=0;
   switch(yytext[1])
