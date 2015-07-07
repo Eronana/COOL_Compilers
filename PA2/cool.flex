@@ -125,7 +125,7 @@ STR_END \"
 {OBJECTID} {SETID;return OBJECTID;}
 {TYPEID} {SETID;return TYPEID;}
 {OPERATOR} {return *yytext;}
-/*_ {RETURN_ERROR("Invaild identifier");}*/
+
 {SPACE} {}
  /*
   *  String constants (C syntax)
