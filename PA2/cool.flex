@@ -70,7 +70,7 @@ B_FALSE f(?i:alse)
 COMMENT_BEG \(\*
 COMMENT_END \*\)
 LINE_COMMENT --[^\n]*
-STR_ESP \\[.\n]
+STR_ESP \\.|\\\n
 STR_ANY [^"\\\n\0]
 STR_NULL \0
 STR_NL \n
@@ -133,20 +133,20 @@ STR_END \"
   *
   */
 <INITIAL>{STR_BEG} {string_buf_ptr=string_buf;str_err=NULL;BEGIN(INSTRING);}
+<INSTRING>{STR_NULL} {RETURN_ERROR("String contains null character");}
 <INSTRING>{STR_ESP} {
   char c=0;
   switch(yytext[1])
   {
+    case 'n':c='\n';break;
+    case 't':c='\t';break;
     case 'b':c='\b';break;
     case 'f':c='\f';break;
-    case 't':c='\t';break;
-    case 'n':c='\n';break;
     case '\n':curr_lineno++;
     default:c=yytext[1];
   }
-  if(c)append_str('\\'),append_str(c);
+  if(c)append_str(c);
 }
-<INSTRING>{STR_NULL} {str_err="String contains null character";}
 <INSTRING>{STR_NL} {curr_lineno++;str_err="Unterminated string constant";}
 <INSTRING>{STR_ANY} {append_str(*yytext);}
 <INSTRING>{STR_END} {
