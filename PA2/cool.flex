@@ -89,6 +89,7 @@ STR_END \"
 <INITIAL>{COMMENT_END} {RETURN_ERROR("Unmatched *)");}
 <INITIAL,INCOMMENT>{STR_NL} {curr_lineno++;}
 <INCOMMENT>. {}
+{LINE_COMMENT} {}
  /*
   *  The multiple-character operators.
   */
@@ -124,6 +125,7 @@ STR_END \"
 {OBJECTID} {SETID;return OBJECTID;}
 {TYPEID} {SETID;return TYPEID;}
 {OPERATOR} {return *yytext;}
+{SPACE} {}
  /*
   *  String constants (C syntax)
   *  Escape sequence \c is accepted for all characters c. Except for 
@@ -145,18 +147,16 @@ STR_END \"
   if(c)append_str(c);
 }
 <INSTRING>{STR_NULL} {str_err="String contains null character";}
-<INSTRING>{STR_NL} {curr_lineno++;BEGIN(INITIAL);RETURN_ERROR("Unterminated string constant");}
+<INSTRING>{STR_NL} {curr_lineno++;RETURN_ERROR("Unterminated string constant");}
 <INSTRING>{STR_ANY} {append_str(*yytext);}
 <INSTRING>{STR_END} {
+  BEGIN(INITIAL);
   if(str_err)RETURN_ERROR(str_err);
   *string_buf_ptr=0;
   cool_yylval.symbol=stringtable.add_string(string_buf);
-  BEGIN(INITIAL);
   return STR_CONST;
 }
 <INSTRING><<EOF>> {BEGIN(INITIAL);RETURN_ERROR("EOF in string constant");}
-{LINE_COMMENT} {}
-{SPACE} {}
 
 %%
 void append_str(char c)
