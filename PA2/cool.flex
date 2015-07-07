@@ -59,7 +59,7 @@ void append_str(char c);
 DARROW =>
 ASSIGN <-
 LE <=
-OPERATOR [-=:;.(){}@,~+*/<_]
+OPERATOR [-=:;.(){}@,~+*/<]
 NEWLINE \n
 SPACE [ \f\r\t\v]
 DIGIT [0-9]+
@@ -134,7 +134,7 @@ STR_END \"
   *
   */
 <INITIAL>{STR_BEG} {string_buf_ptr=string_buf;str_err=NULL;BEGIN(INSTRING);}
-<INSTRING>{STR_NULL} {RETURN_ERROR("String contains null character");}
+<INSTRING>{STR_NULL} {BEGIN(INITIAL);RETURN_ERROR("String contains null character");}
 <INSTRING>{STR_ESP} {
   char c=0;
   switch(yytext[1])
@@ -158,7 +158,7 @@ STR_END \"
   return STR_CONST;
 }
 <INSTRING><<EOF>> {BEGIN(INITIAL);RETURN_ERROR("EOF in string constant");}
-
+<*>. {RETURN_ERROR(*yytext);}
 %%
 void append_str(char c)
 {
