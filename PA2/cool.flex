@@ -148,7 +148,7 @@ _ {RETURN_ERROR("Invaild identifier");}
   }
   if(c)append_str(c);
 }
-<INSTRING>{STR_NL} {curr_lineno++;RETURN_ERROR("Unterminated string constant");}
+<INSTRING>{STR_NL} {curr_lineno++;BEGIN(INITIAL);RETURN_ERROR("Unterminated string constant");}
 <INSTRING>{STR_ANY} {append_str(*yytext);}
 <INSTRING>{STR_END} {
   BEGIN(INITIAL);
