@@ -70,7 +70,7 @@ B_FALSE f(?i:alse)
 COMMENT_BEG \(\*
 COMMENT_END \*\)
 LINE_COMMENT --[^\n]*
-STR_ESP \\.|\\\n
+STR_ESP \\[.\n]
 STR_ANY [^"\\\n\0]
 STR_NULL \0
 STR_NL \n
@@ -88,6 +88,7 @@ STR_END \"
 <INCOMMENT><<EOF>> {BEGIN(INITIAL);RETURN_ERROR("EOF in comment");}
 <INITIAL>{COMMENT_END} {RETURN_ERROR("Unmatched *)");}
 <INITIAL,INCOMMENT>{STR_NL} {curr_lineno++;}
+<INCOMMENT>. {}
  /*
   *  The multiple-character operators.
   */
