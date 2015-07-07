@@ -70,7 +70,7 @@ B_FALSE f(?i:alse)
 COMMENT_BEG \(\*
 COMMENT_END \*\)
 LINE_COMMENT --[^\n]*
-STR_ESP \\.||\\\n
+STR_ESP \\[.\n]
 STR_ANY [^"\\\n\0]
 STR_NULL \0
 STR_NL \n
@@ -144,10 +144,10 @@ STR_END \"
     case '\n':curr_lineno++;
     default:c=yytext[1];
   }
-  if(c)append_str(c);
+  if(c)append_str('\\'),append_str(c);
 }
 <INSTRING>{STR_NULL} {str_err="String contains null character";}
-<INSTRING>{STR_NL} {curr_lineno++;RETURN_ERROR("Unterminated string constant");}
+<INSTRING>{STR_NL} {curr_lineno++;str_err="Unterminated string constant";}
 <INSTRING>{STR_ANY} {append_str(*yytext);}
 <INSTRING>{STR_END} {
   BEGIN(INITIAL);
