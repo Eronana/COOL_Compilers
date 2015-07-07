@@ -75,12 +75,12 @@ STR_NULL \0
 STR_NL \n
 STR_BEG \"
 STR_END \"
+%x INCOMMENT INSTRING
 %%
 
  /*
   *  Nested comments
   */
-%x INCOMMENT INSTRING
 <INITIAL>{COMMENT_BEG} {comment_num++;BEGIN(INCOMMENT);}
 <INCOMMENT>{COMMENT_BEG} {comment_num++;}
 <INCOMMENT>{COMMENT_END} {if(!--comment_num)BEGIN(INITIAL);}
