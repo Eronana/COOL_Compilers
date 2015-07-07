@@ -70,7 +70,7 @@ B_FALSE f(?i:alse)
 COMMENT_BEG \(\*
 COMMENT_END \*\)
 LINE_COMMENT --[^\n]*
-STR_ESP \\.
+STR_ESP \\.|\\\n
 STR_ANY [^"\\\n\0]
 STR_NULL \0
 STR_NL \n
@@ -138,7 +138,7 @@ STR_END \"
     case 'f':c='\f';break;
     case 't':c='\t';break;
     case 'n':c='\n';break;
-    case '\n':curr_lineno++;break;
+    case '\n':curr_lineno++;
     default:c=yytext[1];
   }
   if(c)append_str(c);
@@ -154,6 +154,8 @@ STR_END \"
   return STR_CONST;
 }
 <INSTRING><<EOF>> {BEGIN(INITIAL);RETURN_ERROR("EOF in string constant");}
+{LINE_COMMENT} {}
+{SPACE} {}
 
 %%
 void append_str(char c)
