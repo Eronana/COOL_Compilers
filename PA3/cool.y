@@ -208,9 +208,9 @@
     feature
     : OBJECTID '(' dummy_formal_list ')' ':' TYPEID '{' expr '}' ';'
     	{$$=method($1,$3,$6,$8);}
-    | OBJECTID ':' TYPEID
+    | OBJECTID ':' TYPEID ';'
     	{$$=attr($1,$3,no_expr());}
-    | OBJECTID ':' TYPEID ASSIGN expr
+    | OBJECTID ':' TYPEID ASSIGN expr ';'
     	{$$=attr($1,$3,$5);}
     ;
     dummy_formal_list
