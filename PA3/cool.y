@@ -181,7 +181,7 @@
    		parse_results = $$;
    	}
    	| error ';' class
-   		{$$=$3;parse_results = $$;}
+   		{$$=single_Classes($3);parse_results = $$;}
    	| class_list error ';'
    		{$$=$1;parse_results = $$;}
     ;
