@@ -201,9 +201,9 @@
     	{$$=$1;}
     ;
     feature_list: feature
-    	{$$=singleFeatures($1);}
+    	{$$=single_Features($1);}
     | feature_list feature
-    	{$$=appendFeatures($1,singleFeatures($2));}
+    	{$$=append_Features($1,single_Features($2));}
     ;
     feature
     : OBJECTID '(' dummy_formal_list ')' ':' TYPEID '{' expr '}' ';'
