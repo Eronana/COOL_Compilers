@@ -297,6 +297,10 @@
     	{$$=single_Expressions($1);}
     | expr_list_semi expr ';'
     	{$$=append_Expressions($1,single_Expressions($2));}
+    | error ';'
+    	{$$=single_Expressions($1);}
+    | expr_list_semi error ';'
+    	{$$=$1;}
     ;
     let_expression
     : OBJECTID ':' TYPEID ',' let_expression
