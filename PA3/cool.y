@@ -196,7 +196,7 @@
     /* Feature list may be empty, but no empty features in list. */
     dummy_feature_list
     : /* empty */
-    	{  $$ = nil_Features(); }
+    	{$$ = nil_Features();}
     | feature_list
     	{$$=$1;}
     ;
@@ -212,6 +212,8 @@
     	{$$=attr($1,$3,no_expr());}
     | OBJECTID ':' TYPEID ASSIGN expr ';'
     	{$$=attr($1,$3,$5);}
+    | error ';'
+    	{$$=nil_Features();}
     ;
     dummy_formal_list
     : /* empty */
