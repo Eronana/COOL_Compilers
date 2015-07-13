@@ -20,11 +20,11 @@
     extern int node_lineno;          /* set before constructing a tree node
     to whatever you want the line number
     for the tree node to be */
-      
-      
-      #define YYLLOC_DEFAULT(Current, Rhs, N)         \
-      Current = Rhs[1];                             \
-      node_lineno = Current;
+    	
+    	
+    	#define YYLLOC_DEFAULT(Current, Rhs, N)         \
+    	Current = Rhs[1];                             \
+    	node_lineno = Current;
     
     
     #define SET_NODELOC(Current)  \
@@ -48,26 +48,26 @@
     
     plus_consts	: INT_CONST '+' INT_CONST 
     {
-      // Set the line number of the current non-terminal:
-      // ***********************************************
-      // You can access the line numbers of the i'th item with @i, just
-      // like you acess the value of the i'th exporession with $i.
-      //
-      // Here, we choose the line number of the last INT_CONST (@3) as the
-      // line number of the resulting expression (@$). You are free to pick
-      // any reasonable line as the line number of non-terminals. If you 
-      // omit the statement @$=..., bison has default rules for deciding which 
-      // line number to use. Check the manual for details if you are interested.
-      @$ = @3;
-      
-      
-      // Observe that we call SET_NODELOC(@3); this will set the global variable
-      // node_lineno to @3. Since the constructor call "plus" uses the value of 
-      // this global, the plus node will now have the correct line number.
-      SET_NODELOC(@3);
-      
-      // construct the result node:
-      $$ = plus(int_const($1), int_const($3));
+    	// Set the line number of the current non-terminal:
+    	// ***********************************************
+    	// You can access the line numbers of the i'th item with @i, just
+    	// like you acess the value of the i'th exporession with $i.
+    	//
+    	// Here, we choose the line number of the last INT_CONST (@3) as the
+    	// line number of the resulting expression (@$). You are free to pick
+    	// any reasonable line as the line number of non-terminals. If you 
+    	// omit the statement @$=..., bison has default rules for deciding which 
+    	// line number to use. Check the manual for details if you are interested.
+    	@$ = @3;
+    	
+    	
+    	// Observe that we call SET_NODELOC(@3); this will set the global variable
+    	// node_lineno to @3. Since the constructor call "plus" uses the value of 
+    	// this global, the plus node will now have the correct line number.
+    	SET_NODELOC(@3);
+    	
+    	// construct the result node:
+    	$$ = plus(int_const($1), int_const($3));
     }
     
     */
@@ -87,20 +87,20 @@
     
     /* A union of all the types that can be the result of parsing actions. */
     %union {
-      Boolean boolean;
-      Symbol symbol;
-      Program program;
-      Class_ class_;
-      Classes classes;
-      Feature feature;
-      Features features;
-      Formal formal;
-      Formals formals;
-      Case case_;
-      Cases cases;
-      Expression expression;
-      Expressions expressions;
-      char *error_msg;
+    	Boolean boolean;
+    	Symbol symbol;
+    	Program program;
+    	Class_ class_;
+    	Classes classes;
+    	Feature feature;
+    	Features features;
+    	Formal formal;
+    	Formals formals;
+    	Case case_;
+    	Cases cases;
+    	Expression expression;
+    	Expressions expressions;
+    	char *error_msg;
     }
     
     /* 
@@ -151,7 +151,7 @@
 
 
     /* Precedence declarations go here. */
-    %left IN
+    %nonassoc IN
     %right ASSIGN
     %right NOT
     %nonassoc LE '<' '='
@@ -183,126 +183,140 @@
     ;
     
     /* If no parent is specified, the class inherits from the Object class. */
-    class	: CLASS TYPEID '{' dummy_feature_list '}' ';'
-    { $$ = class_($2,idtable.add_string("Object"),$4,
-    stringtable.add_string(curr_filename)); }
+    class
+    : CLASS TYPEID '{' dummy_feature_list '}' ';'
+	{
+		$$ = class_($2,idtable.add_string("Object"),$4,
+		stringtable.add_string(curr_filename));
+	}
     | CLASS TYPEID INHERITS TYPEID '{' dummy_feature_list '}' ';'
-    { $$ = class_($2,$4,$6,stringtable.add_string(curr_filename)); }
+    	{$$ = class_($2,$4,$6,stringtable.add_string(curr_filename));}
     ;
     
     /* Feature list may be empty, but no empty features in list. */
-    dummy_feature_list:		/* empty */
-      {  $$ = nil_Features(); }
+    dummy_feature_list
+    : /* empty */
+    	{  $$ = nil_Features(); }
     | feature_list
-      {$$=$1;}
+    	{$$=$1;}
     ;
     feature_list: feature
-      {$$=singleFeatures($1);}
+    	{$$=singleFeatures($1);}
     | feature_list feature
-      {$$=appendFeatures($1,singleFeatures($2));}
+    	{$$=appendFeatures($1,singleFeatures($2));}
     ;
-    feature: OBJECTID '(' dummy_formal_list ')' ':' TYPEID '{' expr '}' ';'
-      {$$=method($1,$3,$6,$8);}
+    feature
+    : OBJECTID '(' dummy_formal_list ')' ':' TYPEID '{' expr '}' ';'
+    	{$$=method($1,$3,$6,$8);}
     | OBJECTID ':' TYPEID
-      {$$=attr($1,$3,no_expr());}
+    	{$$=attr($1,$3,no_expr());}
     | OBJECTID ':' TYPEID ASSIGN expr
-      {$$=attr($1,$3,$5);}
+    	{$$=attr($1,$3,$5);}
     ;
-    dummy_formal_list:
-      {$$=nil_Formals();}
+    dummy_formal_list
+    : /* empty */
+    	{$$=nil_Formals();}
     | formal_list
-      {$$=$1;}
+    	{$$=$1;}
     ;
-    formal_list: formal
-      {$$=single_Formals($1);}
+    formal_list
+    : formal
+    	{$$=single_Formals($1);}
     | formal_list ',' formal
-      {$$=append_Formals($1,single_Formals($3));}
+    	{$$=append_Formals($1,single_Formals($3));}
     ;
-    formal: OBJECTID ':' TYPEID
-      {$$=formal($1,$3);}
+    formal
+    : OBJECTID ':' TYPEID
+    	{$$=formal($1,$3);}
     ;
-    expr: OBJECTID ASSIGN expr
-    {$$=assign($1,$3);}
+    expr
+    : OBJECTID ASSIGN expr
+    	{$$=assign($1,$3);}
     | expr '.' OBJECTID '(' dummy_expr_list ')'
-      {$$=dispatch($1,$3,$5);}
+    	{$$=dispatch($1,$3,$5);}
     | expr '@' TYPEID '.' OBJECTID '(' dummy_expr_list ')'
-      {$$=static_dispatch($1,$3,$5,$7);}
+    	{$$=static_dispatch($1,$3,$5,$7);}
     | OBJECTID '(' dummy_expr_list ')'
-      {$$=dispatch(object(idtable.add_string("self")),$1,$3);}
+    	{$$=dispatch(object(idtable.add_string("self")),$1,$3);}
     | IF expr THEN expr ELSE expr FI
-      {$$=cond($2,$4,$6);}
+    	{$$=cond($2,$4,$6);}
     | WHILE expr LOOP expr POOL
-      {$$=loop($2,$4);}
+    	{$$=loop($2,$4);}
     | '{' expr_list_semi '}'
-      {$$=block($2);}
+    	{$$=block($2);}
     | LET let_expression
-      {$$=$2;}
+    	{$$=$2;}
     | CASE expr OF case_list ESAC
-      {$$=typcase($2,$4);}
+    	{$$=typcase($2,$4);}
     | NEW TYPEID
-      {$$=new_($2);}
+    	{$$=new_($2);}
     | ISVOID expr
-      {$$=isvoid($2);}
+    	{$$=isvoid($2);}
     | expr '+' expr
-      {$$=plus($1,$3);}
+    	{$$=plus($1,$3);}
     | expr '-' expr
-      {$$=sub($1,$3);}
+    	{$$=sub($1,$3);}
     | expr '*' expr
-      {$$=mul($1,$3);}
+    	{$$=mul($1,$3);}
     | expr '/' expr
-      {$$=divide($1,$3);}
+    	{$$=divide($1,$3);}
     | '~' expr
-      {$$=neg($2);}
+    	{$$=neg($2);}
     | expr '<' expr
-      {$$=lt($1,$3);}
+    	{$$=lt($1,$3);}
     | expr LE expr
-      {$$=leq($1,$3);}
+    	{$$=leq($1,$3);}
     | expr '=' expr
     {$$=eq($1,$3);}
     | NOT expr
-      {$$=comp($2);}
+    	{$$=comp($2);}
     | '(' expr ')'
-      {$$=$2;}
+    	{$$=$2;}
     | OBJECTID
-      {$$=object($1);}
+    	{$$=object($1);}
     | INT_CONST
-      {$$=int_const($1);}
+    	{$$=int_const($1);}
     | STR_CONST
-      {$$=string_const($1);}
+    	{$$=string_const($1);}
     | BOOL_CONST
-      {$$=bool_const($1);}
+    	{$$=bool_const($1);}
     ;
-    dummy_expr_list:
-      {$$=nil_Expressions();}
+    dummy_expr_list
+    : /* empty */
+    	{$$=nil_Expressions();}
     | expr_list
-      {$$=$1;}
+    	{$$=$1;}
     ;
-    expr_list: expr
-      {$$=single_Expressions($1);}
+    expr_list
+    : expr
+    	{$$=single_Expressions($1);}
     | expr_list ',' expr
-      {$$=append_Expressions($1,single_Expressions($3));}
+    	{$$=append_Expressions($1,single_Expressions($3));}
     ;
     expr_list_semi: expr ';'
-      {$$=single_Expressions($1);}
+    	{$$=single_Expressions($1);}
     | expr_list_semi expr ';'
-      {$$=append_Expressions($1,single_Expressions($2));}
+    	{$$=append_Expressions($1,single_Expressions($2));}
     ;
-    let_expression: OBJECTID ':' TYPEID ',' let_expression
-      {$$=let($1,$3,no_expr(),$5);}
+    let_expression
+    : OBJECTID ':' TYPEID ',' let_expression
+    	{$$=let($1,$3,no_expr(),$5);}
     | OBJECTID ':' TYPEID ASSIGN expr ',' let_expression
-      {$$=let($1,$3,$5,$7);}
+    	{$$=let($1,$3,$5,$7);}
     | OBJECTID ':' TYPEID IN expr
-      {$$=let($1,$3,no_expr(),$5);}
+    	{$$=let($1,$3,no_expr(),$5);}
     | OBJECTID ':' TYPEID ASSIGN expr IN expr
-      {$$=let($1,$3,$5,$7);}
+    	{$$=let($1,$3,$5,$7);}
     ;
-    case_list: case
-      {$$=single_Cases($1);}
+    case_list
+    : case
+    	{$$=single_Cases($1);}
     | case_list case
-      {$$=append_Cases($1,single_Cases($2));}
+    	{$$=append_Cases($1,single_Cases($2));}
     ;
-    case: OBJECTID ':' TYPEID DARROW expr ';'
-      {$$=branch($1,$3,$5);}
+    case
+    : OBJECTID ':' TYPEID DARROW expr ';'
+    	{$$=branch($1,$3,$5);}
     ;
 
     /* end of grammar */
@@ -311,15 +325,15 @@
     /* This function is called automatically when Bison detects a parse error. */
     void yyerror(char *s)
     {
-      extern int curr_lineno;
-      
-      cerr << "\"" << curr_filename << "\", line " << curr_lineno << ": " \
-      << s << " at or near ";
-      print_cool_token(yychar);
-      cerr << endl;
-      omerrs++;
-      
-      if(omerrs>50) {fprintf(stdout, "More than 50 errors\n"); exit(1);}
+    	extern int curr_lineno;
+    	
+    	cerr << "\"" << curr_filename << "\", line " << curr_lineno << ": " \
+    	<< s << " at or near ";
+    	print_cool_token(yychar);
+    	cerr << endl;
+    	omerrs++;
+    	
+    	if(omerrs>50) {fprintf(stdout, "More than 50 errors\n"); exit(1);}
     }
     
     
