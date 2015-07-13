@@ -180,6 +180,10 @@
     	$$ = append_Classes($1,single_Classes($2)); 
    		parse_results = $$;
    	}
+   	| error ';' class
+   		{$$=$3;parse_results = $$;}
+   	| class_list error ';'
+   		{$$=$1;parse_results = $$;}
     ;
     
     /* If no parent is specified, the class inherits from the Object class. */
@@ -316,6 +320,10 @@
     	{$$=let($1,$3,no_expr(),$5);}
     | OBJECTID ':' TYPEID ASSIGN expr IN expr
     	{$$=let($1,$3,$5,$7);}
+    | error ',' let_expression
+    	{$$=$3;}
+    | error IN expr
+    	{$$=$3;}
     ;
     case_list
     : case
