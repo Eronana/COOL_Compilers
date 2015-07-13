@@ -204,10 +204,6 @@
     	{$$=single_Features($1);}
     | feature_list feature
     	{$$=append_Features($1,single_Features($2));}
-    | feature_list error ';'
-    	{$$=$1;}
-    | error ';'
-    	{$$=nil_Features();}
     ;
     feature
     : OBJECTID '(' dummy_formal_list ')' ':' TYPEID '{' expr '}' ';'
@@ -216,6 +212,8 @@
     	{$$=attr($1,$3,no_expr());}
     | OBJECTID ':' TYPEID ASSIGN expr ';'
     	{$$=attr($1,$3,$5);}
+    | error ';'
+    	{$$=nil_Features();}
     ;
     dummy_formal_list
     : /* empty */
@@ -297,14 +295,15 @@
     | expr_list ',' expr
     	{$$=append_Expressions($1,single_Expressions($3));}
     ;
-    expr_list_semi: expr ';'
+    expr_list_semi
+    : expr ';'
     	{$$=single_Expressions($1);}
     | expr_list_semi expr ';'
     	{$$=append_Expressions($1,single_Expressions($2));}
-    | error ';'
-    	{$$=single_Expressions($1);}
     | expr_list_semi error ';'
     	{$$=$1;}
+    | error ';'
+    	{$$=nil_Expressions();}
     ;
     let_expression
     : OBJECTID ':' TYPEID ',' let_expression
