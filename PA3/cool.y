@@ -204,6 +204,10 @@
     	{$$=single_Features($1);}
     | feature_list feature
     	{$$=append_Features($1,single_Features($2));}
+    | feature_list error ';'
+    	{$$=$1;}
+    | error ';'
+    	{$$=nil_Features();}
     ;
     feature
     : OBJECTID '(' dummy_formal_list ')' ':' TYPEID '{' expr '}' ';'
@@ -212,8 +216,6 @@
     	{$$=attr($1,$3,no_expr());}
     | OBJECTID ':' TYPEID ASSIGN expr ';'
     	{$$=attr($1,$3,$5);}
-    | error ';'
-    	{$$=nil_Features();}
     ;
     dummy_formal_list
     : /* empty */
